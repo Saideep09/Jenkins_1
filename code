@@ -1,0 +1,32 @@
+# GitHub Personal Access Token
+$TOKEN = "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"
+
+# GitHub repository details
+$REPO_OWNER = "Saideep09"
+$REPO_NAME = "Jenkins_1"
+
+# Define users and their permissions
+$USERS = @("user1", "user2", "user3")  # Add the GitHub usernames here
+
+# Loop through each user and add them as collaborators with 'push' permission
+foreach ($USER in $USERS) {
+    $url = "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/collaborators/$USER"
+    
+    # Define headers and body for the API request
+    $headers = @{
+        Authorization = "token $TOKEN"
+        Accept        = "application/vnd.github.v3+json"
+    }
+    $body = @{
+        permission = "push"
+    }
+
+    # Make the API request
+    $response = Invoke-RestMethod -Uri $url -Method Put -Headers $headers -Body ($body | ConvertTo-Json)
+
+    if ($response) {
+        Write-Host "Successfully added $USER with 'push' permission."
+    } else {
+        Write-Host "Failed to add $USER. Check the response for errors."
+    }
+}
